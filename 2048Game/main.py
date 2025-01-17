@@ -45,81 +45,143 @@ class Game(tk.Frame):
             self.cellData[row][col] = 2
             self.cells[row][col]["frame"].configure(background=colors[2])
             self.cells[row][col]["number"].configure(background=colors[2], text="2", font=colors["font"],
-                                                             fg=colors["fontColor"])
+                                                             fg=colors["fontColor24"])
+
+    # Generate the random new 2 cell
+    def randomTwo(self):
+        def genPos():
+            randRow = random.randint(0, 3)
+            randCol = random.randint(0, 3)
+            return randRow, randCol
+        row, col = genPos()
+        while self.cellData[row][col] != 0:
+            row, col = genPos()
+        self.cellData[row][col] = 2
+        self.cells[row][col]["frame"].configure(background=colors[2])
+        self.cells[row][col]["number"].configure(background=colors[2], text="2", font=colors["font"],
+                                                 fg=colors["fontColor24"])
 
     def updateGUI(self):
         for i in range(4):
             for j in range(4):
                 self.cells[i][j]["frame"].configure(background=colors[self.cellData[i][j]])
-                if self.cellData[i][j] != 0:
+                if self.cellData[i][j] == 2 or self.cellData[i][j] == 4:
                     self.cells[i][j]["number"].configure(background=colors[self.cellData[i][j]],
                                                          text=str(self.cellData[i][j]), font=colors["font"],
-                                                         fg=colors["fontColor"])
+                                                         fg=colors["fontColor24"])
+                elif self.cellData[i][j] != 0:
+                    self.cells[i][j]["number"].configure(background=colors[self.cellData[i][j]],
+                                                         text=str(self.cellData[i][j]), font=colors["font"],
+                                                         fg=colors["fontColorOthers"])
                 else:
                     self.cells[i][j]["number"].configure(background=colors[self.cellData[i][j]], text="",
-                                                         font=colors["font"], fg=colors["fontColor"])
+                                                         font=colors["font"], fg=colors["fontColorOthers"])
 
     def moveLeft(self, event):
+        # Check if this move can be done
+        validMove = False
         for i in range(4):
-            for j in range(1, 4):
-                if self.cellData[i][j] != 0:
-                    moveTo = j
-                    while moveTo > 0 and self.cellData[i][moveTo - 1] == 0:
-                        moveTo -= 1
-                    if moveTo != j:
-                        self.cellData[i][moveTo] = self.cellData[i][j]
-                        self.cellData[i][j] = 0
-                    if self.cellData[i][moveTo] == self.cellData[i][moveTo - 1]:
-                        self.cellData[i][moveTo - 1] *= 2
-                        self.cellData[i][moveTo] = 0
-        self.updateGUI()
+            for j in range(3):
+                if self.cellData[i][j] == 0 and self.cellData[i][j + 1] != 0 or (self.cellData[i][j] != 0 and (self.cellData[i][j] == self.cellData[i][j + 1])):
+                    validMove = True
+                    break
+            if validMove: break
+
+        if validMove:
+            for i in range(4):
+                for j in range(1, 4):
+                    if self.cellData[i][j] != 0:
+                        moveTo = j
+                        while moveTo > 0 and self.cellData[i][moveTo - 1] == 0:
+                            moveTo -= 1
+                        if moveTo != j:
+                            self.cellData[i][moveTo] = self.cellData[i][j]
+                            self.cellData[i][j] = 0
+                        if self.cellData[i][moveTo] == self.cellData[i][moveTo - 1]:
+                            self.cellData[i][moveTo - 1] *= 2
+                            self.cellData[i][moveTo] = 0
+            self.updateGUI()
+            self.randomTwo()
 
     def moveRight(self, event):
+        # Check if this move can be done
+        validMove = False
         for i in range(4):
-            for j in range(2, -1, -1):
-                if self.cellData[i][j] != 0:
-                    moveTo = j
-                    while moveTo < 3 and self.cellData[i][moveTo + 1] == 0:
-                        moveTo += 1
-                    if moveTo != j:
-                        self.cellData[i][moveTo] = self.cellData[i][j]
-                        self.cellData[i][j] = 0
-                    if moveTo <= 2:
-                        if self.cellData[i][moveTo] == self.cellData[i][moveTo + 1]:
-                            self.cellData[i][moveTo + 1] *= 2
-                            self.cellData[i][moveTo] = 0
-        self.updateGUI()
+            for j in range(3, 0, -1):
+                if self.cellData[i][j] == 0 and self.cellData[i][j - 1] != 0 or (self.cellData[i][j] != 0 and (self.cellData[i][j] == self.cellData[i][j - 1])):
+                    validMove = True
+                    break
+            if validMove: break
+
+        if validMove:
+            for i in range(4):
+                for j in range(2, -1, -1):
+                    if self.cellData[i][j] != 0:
+                        moveTo = j
+                        while moveTo < 3 and self.cellData[i][moveTo + 1] == 0:
+                            moveTo += 1
+                        if moveTo != j:
+                            self.cellData[i][moveTo] = self.cellData[i][j]
+                            self.cellData[i][j] = 0
+                        if moveTo <= 2:
+                            if self.cellData[i][moveTo] == self.cellData[i][moveTo + 1]:
+                                self.cellData[i][moveTo + 1] *= 2
+                                self.cellData[i][moveTo] = 0
+            self.updateGUI()
+            self.randomTwo()
 
     def moveUp(self, event):
+        # Check if this move can be done
+        validMove = False
         for j in range(4):
-            for i in range(1, 4):
-                if self.cellData[i][j] != 0:
-                    moveTo = i
-                    while moveTo > 0 and self.cellData[moveTo - 1][j] == 0:
-                        moveTo -= 1
-                    if moveTo != i:
-                        self.cellData[moveTo][j] = self.cellData[i][j]
-                        self.cellData[i][j] = 0
-                    if self.cellData[moveTo][j] == self.cellData[moveTo - 1][j]:
-                        self.cellData[moveTo - 1][j] *= 2
-                        self.cellData[moveTo][j] = 0
-        self.updateGUI()
+            for i in range(3):
+                if self.cellData[i][j] == 0 and self.cellData[i + 1][j] != 0 or (self.cellData[i][j] != 0 and (self.cellData[i][j] == self.cellData[i + 1][j])):
+                    validMove = True
+                    break
+            if validMove: break
+
+        if validMove:
+            for j in range(4):
+                for i in range(1, 4):
+                    if self.cellData[i][j] != 0:
+                        moveTo = i
+                        while moveTo > 0 and self.cellData[moveTo - 1][j] == 0:
+                            moveTo -= 1
+                        if moveTo != i:
+                            self.cellData[moveTo][j] = self.cellData[i][j]
+                            self.cellData[i][j] = 0
+                        if self.cellData[moveTo][j] == self.cellData[moveTo - 1][j]:
+                            self.cellData[moveTo - 1][j] *= 2
+                            self.cellData[moveTo][j] = 0
+            self.updateGUI()
+            self.randomTwo()
 
     def moveDown(self, event):
+        # Check if this move can be done
+        validMove = False
         for j in range(4):
-            for i in range(2, -1, -1):
-                if self.cellData[i][j] != 0:
-                    moveTo = i
-                    while moveTo < 3 and self.cellData[moveTo + 1][j] == 0:
-                        moveTo += 1
-                    if moveTo != i:
-                        self.cellData[moveTo][j] = self.cellData[i][j]
-                        self.cellData[i][j] = 0
-                    if moveTo <= 2:
-                        if self.cellData[moveTo][j] == self.cellData[moveTo + 1][j]:
-                            self.cellData[moveTo + 1][j] *= 2
-                            self.cellData[moveTo][j] = 0
-        self.updateGUI()
+            for i in range(3, 0, -1):
+                if self.cellData[i][j] == 0 and self.cellData[i - 1][j] != 0 or (self.cellData[i][j] != 0 and (self.cellData[i][j] == self.cellData[i - 1][j])):
+                    validMove = True
+                    break
+            if validMove: break
+
+        if validMove:
+            for j in range(4):
+                for i in range(2, -1, -1):
+                    if self.cellData[i][j] != 0:
+                        moveTo = i
+                        while moveTo < 3 and self.cellData[moveTo + 1][j] == 0:
+                            moveTo += 1
+                        if moveTo != i:
+                            self.cellData[moveTo][j] = self.cellData[i][j]
+                            self.cellData[i][j] = 0
+                        if moveTo <= 2:
+                            if self.cellData[moveTo][j] == self.cellData[moveTo + 1][j]:
+                                self.cellData[moveTo + 1][j] *= 2
+                                self.cellData[moveTo][j] = 0
+            self.updateGUI()
+            self.randomTwo()
 
 
 myapp = Game()
