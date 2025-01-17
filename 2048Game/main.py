@@ -64,7 +64,7 @@ class Game(tk.Frame):
             for j in range(1, 4):
                 if self.cellData[i][j] != 0:
                     moveTo = j
-                    while self.cellData[i][moveTo - 1] == 0 and moveTo > 0:
+                    while moveTo > 0 and self.cellData[i][moveTo - 1] == 0:
                         moveTo -= 1
                     if moveTo != j:
                         self.cellData[i][moveTo] = self.cellData[i][j]
@@ -72,17 +72,54 @@ class Game(tk.Frame):
                     if self.cellData[i][moveTo] == self.cellData[i][moveTo - 1]:
                         self.cellData[i][moveTo - 1] *= 2
                         self.cellData[i][moveTo] = 0
-                        print(self.cellData)
         self.updateGUI()
 
     def moveRight(self, event):
-        return
+        for i in range(4):
+            for j in range(2, -1, -1):
+                if self.cellData[i][j] != 0:
+                    moveTo = j
+                    while moveTo < 3 and self.cellData[i][moveTo + 1] == 0:
+                        moveTo += 1
+                    if moveTo != j:
+                        self.cellData[i][moveTo] = self.cellData[i][j]
+                        self.cellData[i][j] = 0
+                    if moveTo <= 2:
+                        if self.cellData[i][moveTo] == self.cellData[i][moveTo + 1]:
+                            self.cellData[i][moveTo + 1] *= 2
+                            self.cellData[i][moveTo] = 0
+        self.updateGUI()
 
     def moveUp(self, event):
-        return
+        for j in range(4):
+            for i in range(1, 4):
+                if self.cellData[i][j] != 0:
+                    moveTo = i
+                    while moveTo > 0 and self.cellData[moveTo - 1][j] == 0:
+                        moveTo -= 1
+                    if moveTo != i:
+                        self.cellData[moveTo][j] = self.cellData[i][j]
+                        self.cellData[i][j] = 0
+                    if self.cellData[moveTo][j] == self.cellData[moveTo - 1][j]:
+                        self.cellData[moveTo - 1][j] *= 2
+                        self.cellData[moveTo][j] = 0
+        self.updateGUI()
 
     def moveDown(self, event):
-        return
+        for j in range(4):
+            for i in range(2, -1, -1):
+                if self.cellData[i][j] != 0:
+                    moveTo = i
+                    while moveTo < 3 and self.cellData[moveTo + 1][j] == 0:
+                        moveTo += 1
+                    if moveTo != i:
+                        self.cellData[moveTo][j] = self.cellData[i][j]
+                        self.cellData[i][j] = 0
+                    if moveTo <= 2:
+                        if self.cellData[moveTo][j] == self.cellData[moveTo + 1][j]:
+                            self.cellData[moveTo + 1][j] *= 2
+                            self.cellData[moveTo][j] = 0
+        self.updateGUI()
 
 
 myapp = Game()
