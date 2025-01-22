@@ -48,7 +48,10 @@ class Game(tk.Frame):
                                                              fg=colors["fontColor24"])
 
     # Generate the random new 2 cell
-    def randomTwo(self):
+    def randomTile(self):
+        twoOrFour = random.randint(1, 10)
+        newValue = 2
+        if twoOrFour == 1: newValue = 4
         def genPos():
             randRow = random.randint(0, 3)
             randCol = random.randint(0, 3)
@@ -56,9 +59,9 @@ class Game(tk.Frame):
         row, col = genPos()
         while self.cellData[row][col] != 0:
             row, col = genPos()
-        self.cellData[row][col] = 2
-        self.cells[row][col]["frame"].configure(background=colors[2])
-        self.cells[row][col]["number"].configure(background=colors[2], text="2", font=colors["font"],
+        self.cellData[row][col] = newValue
+        self.cells[row][col]["frame"].configure(background=colors[newValue])
+        self.cells[row][col]["number"].configure(background=colors[newValue], text=str(newValue), font=colors["font"],
                                                  fg=colors["fontColor24"])
 
     def updateGUI(self):
@@ -97,11 +100,18 @@ class Game(tk.Frame):
                         if moveTo != j:
                             self.cellData[i][moveTo] = self.cellData[i][j]
                             self.cellData[i][j] = 0
-                        if self.cellData[i][moveTo] == self.cellData[i][moveTo - 1]:
-                            self.cellData[i][moveTo - 1] *= 2
-                            self.cellData[i][moveTo] = 0
+            for i in range(4):
+                for j in range(3):
+                    if self.cellData[i][j] == self.cellData[i][j + 1]:
+                        self.cellData[i][j] *= 2
+                        self.cellData[i][j + 1] = 0
+                        for k in range(j + 1, 3):
+                            if self.cellData[i][k] == 0:
+                                self.cellData[i][k] = self.cellData[i][k + 1]
+                                self.cellData[i][k + 1] = 0
+
             self.updateGUI()
-            self.randomTwo()
+            self.randomTile()
 
     def moveRight(self, event):
         # Check if this move can be done
@@ -123,12 +133,17 @@ class Game(tk.Frame):
                         if moveTo != j:
                             self.cellData[i][moveTo] = self.cellData[i][j]
                             self.cellData[i][j] = 0
-                        if moveTo <= 2:
-                            if self.cellData[i][moveTo] == self.cellData[i][moveTo + 1]:
-                                self.cellData[i][moveTo + 1] *= 2
-                                self.cellData[i][moveTo] = 0
+            for i in range(4):
+                for j in range(3, 0, -1):
+                    if self.cellData[i][j] == self.cellData[i][j - 1]:
+                        self.cellData[i][j] *= 2
+                        self.cellData[i][j - 1] = 0
+                        for k in range(j - 1, 0, -1):
+                            if self.cellData[i][k] == 0:
+                                self.cellData[i][k] = self.cellData[i][k - 1]
+                                self.cellData[i][k - 1] = 0
             self.updateGUI()
-            self.randomTwo()
+            self.randomTile()
 
     def moveUp(self, event):
         # Check if this move can be done
@@ -150,11 +165,17 @@ class Game(tk.Frame):
                         if moveTo != i:
                             self.cellData[moveTo][j] = self.cellData[i][j]
                             self.cellData[i][j] = 0
-                        if self.cellData[moveTo][j] == self.cellData[moveTo - 1][j]:
-                            self.cellData[moveTo - 1][j] *= 2
-                            self.cellData[moveTo][j] = 0
+            for j in range(4):
+                for i in range(3):
+                    if self.cellData[i][j] == self.cellData[i + 1][j]:
+                        self.cellData[i][j] *= 2
+                        self.cellData[i + 1][j] = 0
+                        for k in range(i + 1, 3):
+                            if self.cellData[k][j] == 0:
+                                self.cellData[k][j] = self.cellData[k + 1][j]
+                                self.cellData[k + 1][j] = 0
             self.updateGUI()
-            self.randomTwo()
+            self.randomTile()
 
     def moveDown(self, event):
         # Check if this move can be done
@@ -176,12 +197,17 @@ class Game(tk.Frame):
                         if moveTo != i:
                             self.cellData[moveTo][j] = self.cellData[i][j]
                             self.cellData[i][j] = 0
-                        if moveTo <= 2:
-                            if self.cellData[moveTo][j] == self.cellData[moveTo + 1][j]:
-                                self.cellData[moveTo + 1][j] *= 2
-                                self.cellData[moveTo][j] = 0
+            for j in range(4):
+                for i in range(3, 0, -1):
+                    if self.cellData[i][j] == self.cellData[i - 1][j]:
+                        self.cellData[i][j] *= 2
+                        self.cellData[i - 1][j] = 0
+                        for k in range(i - 1, 3):
+                            if self.cellData[k][j] == 0:
+                                self.cellData[k][j] = self.cellData[k - 1][j]
+                                self.cellData[k - 1][j] = 0
             self.updateGUI()
-            self.randomTwo()
+            self.randomTile()
 
 
 myapp = Game()
@@ -191,5 +217,10 @@ myapp.start()
 myapp.master.title("2048")
 myapp.master.minsize(600, 600)
 myapp.master.maxsize(1200, 1200)
+
+myapp.cellData[0][0] = 2
+myapp.cellData[0][1] = 2
+myapp.cellData[0][2] = 4
+myapp.updateGUI()
 
 myapp.mainloop()
