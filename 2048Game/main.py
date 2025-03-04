@@ -9,9 +9,10 @@ class Game(tk.Frame):
         super().__init__(master)
         self.cellData = None
         self.cells = None
+        self.score = 0
         self.grid()
         self.primary = tk.Frame(self, background=colors["background"], borderwidth=2, width=500, height=500)
-        self.primary.grid(pady=10, padx=10, row=0, column=0)
+        self.primary.grid(pady=(100, 0))
         self.master.bind("<Left>", self.moveLeft)
         self.master.bind("<Right>", self.moveRight)
         self.master.bind("<Up>", self.moveUp)
@@ -30,6 +31,12 @@ class Game(tk.Frame):
                 finalFrame = {"frame": frame, "number": number}
                 row.append(finalFrame)
             self.cells.append(row)
+
+        score_frame = tk.Frame(self)
+        score_frame.place(relx=0.5, y=45, anchor="center")
+        tk.Label(score_frame, text="Score: ", background=colors["background"], fg="white", font=colors["score_font"]).grid(row=0)
+        self.score_label = tk.Label(score_frame, text="0", background=colors["background"], fg="white", font=colors["score_font"])
+        self.score_label.grid(row=0, column=1)
 
     # Add the initial two cells with value 2 to the storage matrix and the display
     def start(self):
@@ -79,6 +86,7 @@ class Game(tk.Frame):
                 else:
                     self.cells[i][j]["number"].configure(background=colors[self.cellData[i][j]], text="",
                                                          font=colors["font"], fg=colors["fontColorOthers"])
+        self.score_label.config(text=str(self.score))
 
     def moveLeft(self, event):
         # Check if this move can be done
@@ -103,6 +111,7 @@ class Game(tk.Frame):
             for i in range(4):
                 for j in range(3):
                     if self.cellData[i][j] == self.cellData[i][j + 1]:
+                        self.score += self.cellData[i][j] * 2
                         self.cellData[i][j] *= 2
                         self.cellData[i][j + 1] = 0
                         for k in range(j + 1, 3):
@@ -136,6 +145,7 @@ class Game(tk.Frame):
             for i in range(4):
                 for j in range(3, 0, -1):
                     if self.cellData[i][j] == self.cellData[i][j - 1]:
+                        self.score += self.cellData[i][j] * 2
                         self.cellData[i][j] *= 2
                         self.cellData[i][j - 1] = 0
                         for k in range(j - 1, 0, -1):
@@ -168,6 +178,7 @@ class Game(tk.Frame):
             for j in range(4):
                 for i in range(3):
                     if self.cellData[i][j] == self.cellData[i + 1][j]:
+                        self.score += self.cellData[i][j] * 2
                         self.cellData[i][j] *= 2
                         self.cellData[i + 1][j] = 0
                         for k in range(i + 1, 3):
@@ -200,9 +211,10 @@ class Game(tk.Frame):
             for j in range(4):
                 for i in range(3, 0, -1):
                     if self.cellData[i][j] == self.cellData[i - 1][j]:
+                        self.score += self.cellData[i][j] * 2
                         self.cellData[i][j] *= 2
                         self.cellData[i - 1][j] = 0
-                        for k in range(i - 1, 3):
+                        for k in range(i - 1, 0, -1):
                             if self.cellData[k][j] == 0:
                                 self.cellData[k][j] = self.cellData[k - 1][j]
                                 self.cellData[k - 1][j] = 0
@@ -218,9 +230,9 @@ myapp.master.title("2048")
 myapp.master.minsize(600, 600)
 myapp.master.maxsize(1200, 1200)
 
-myapp.cellData[0][0] = 2
-myapp.cellData[0][1] = 2
-myapp.cellData[0][2] = 4
-myapp.updateGUI()
+# myapp.cellData[0][0] = 2
+# myapp.cellData[0][1] = 2
+# myapp.cellData[0][2] = 4
+# myapp.updateGUI()
 
 myapp.mainloop()

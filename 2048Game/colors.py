@@ -1,5 +1,6 @@
 colors = {
     "font": ("Verdana", 40, "bold"),
+    "score_font": ("Verdana", 16, "bold"),
     "fontColor24": "#787167",
     "fontColorOthers": "#ffffff",
     "background": "#B9ADA1",
